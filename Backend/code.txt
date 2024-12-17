@@ -1,0 +1,695 @@
+function doGet(req) {
+  var SHEET_URL = "https://docs.google.com/spreadsheets/d/14xfwhjABKF7FZPZKfcZHK8Q9cZouj0FI6hUgYdza-BY/edit";
+  var db = SpreadsheetApp.openByUrl(SHEET_URL);
+  var action = req.parameter.action;
+  var ret;
+
+  switch (action) {
+    case "listQA":
+      ret = listQA(req, db);
+      break;
+    case "getQA":
+      ret = getQA(req, db);
+      break;
+    case "saveQA":
+      ret = saveQA(req, db);
+      break;
+    case "fakeChat":
+      ret = handleFakeChat(req);
+      break;
+    case "chat":
+      ret = handleChat(req);
+      break;
+    case "saveAnswer":
+      ret = saveAnswer(req, db);
+      break;
+    default:
+      ret = { error: "Invalid action" };
+  }
+
+  return ContentService.createTextOutput(JSON.stringify(ret))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// 1. Endpoint to send a string to ChatGPT and return the response
+function handleFakeChat(req) {
+  var question = req.parameter.question;
+  if (!question) {
+    return { error: "No question provided" };
+  }
+
+  // Simulated ChatGPT API call
+  var prompt = "ChatGPT Prompt: " + question;
+  var response = "Simulated response to: " + prompt;
+
+  return { prompt: prompt, response: response };
+}
+
+function handleChat(req) {
+  var question = req.parameter.question; // 사용자 질문
+  if (!question) {
+    return { error: "No question provided" };
+  }
+
+  // OpenAI API 설정
+  var OPENAI_API_KEY = "OPENAI_API_KEY";
+  var OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"; // OpenAI 엔드포인트
+
+  // 영상 스크립트 및 프롬프트 설정
+  const script = `0:00:00.625,0:00:02.022
+안녕하세요?
+
+0:00:02.022,0:00:04.420
+개발자들 팀의 김하진입니다.
+
+0:00:04.420,0:00:10.480
+저희는 Resource Management with Kubernetes using Meta Reinforcement Learning을 연구하고 있습니다.
+
+0:00:11.843,0:00:15.725
+서버 클러스터를 운영할 때에는 굉장히 다양한 작업들을 필요로 합니다.
+
+0:00:15.725,0:00:20.613
+서버 자원 및 애플리케이션의 자원 소비 현황을 관리하기 위한
+resource management,
+
+0:00:20.613,0:00:25.429
+애플리케이션의 요구 사항에 부합하도록 실제로 서버 자원을 할당하는 resource scheduling,
+
+0:00:25.429,0:00:27.677
+사용자 요청이 증감함에 따라
+
+0:00:27.677,0:00:32.279
+애플리케이션에 복제본의 수량을 조절해서 가용성을 유지하기 위한 scaling
+
+0:00:32.279,0:00:36.928
+요청이 소수의 애플리케이션으로 몰리지 않도록 부하를 적절히 분산하는 load balancing 등
+
+0:00:36.928,0:00:38.620
+굉장히 다양한 작업들을 필요로 합니다.
+
+0:00:39.351,0:00:43.280
+이러한 서버 운영 작업들을 총칭해서 오케스트레이션이라고 부릅니다.
+
+0:00:45.000,0:00:49.665
+Kubernetes는 오픈 소스 컨테이너 오케스트레이션 시스템이라고 부릅니다.
+
+0:00:49.665,0:00:52.143
+아주 다양한 오케스트레이션 기능들을 제공하는
+
+0:00:52.143,0:00:54.840
+서버 운영을 위한 일종의 맥가이버 칼과 같은 친구입니다.
+
+0:00:55.839,0:00:59.839
+이 Kubernetes의 특징은 모든 컴포넌트를 분산 처리했으며
+
+0:00:59.839,0:01:02.793
+또한 장애 대응이 가능하도록 설계했습니다.
+
+0:01:02.793,0:01:06.000
+따라서 장애가 발생하더라도 빠르게 복구하여
+
+0:01:06.000,0:01:08.196
+가용성을 유지하는 기능들을 제공합니다.
+
+0:01:09.246,0:01:14.313
+또한 최대 1만대 가량의 대규모 클러스터를 안정적으로 운영할 수 있게 해주는
+
+0:01:14.313,0:01:18.000
+서버 운영을 위한 오케스트레이션 시스템입니다.
+
+0:01:19.573,0:01:24.000
+Kubernetes에 속한 서버들은 크게 두 종류로 구분하게 됩니다.
+
+0:01:24.000,0:01:28.350
+Kubernetes의 관리 기능들을 제공하기 위한 마스터 노드 혹은 컨트롤 플레인,
+
+0:01:28.350,0:01:34.783
+그리고 실제 애플리케이션이 설치되는 워커 노드 혹은 데이터 플레인입니다.
+
+0:01:34.783,0:01:37.492
+이 마스터 노드 혹은 컨트롤 플레인에서는
+
+0:01:37.492,0:01:41.776
+사용자, 즉 애플리케이션의 개발자나 클러스터 운영자들을 위한
+
+0:01:41.776,0:01:45.066
+Kubernetes의 조작을 가능하게 해주는 API 서버
+
+0:01:45.066,0:01:49.316
+그리고 실제로 자원을 스케줄링해주는 스케줄러 등으로 구성되고요.
+
+0:01:49.316,0:01:53.918
+또 워커 노드에는 실제로 애플리케이션이 컨테이너로 한 번 감싸지고
+
+0:01:53.918,0:01:57.065
+또 Pod로 한 번 더 감싸져서 설치됩니다.
+
+0:01:57.065,0:02:02.348
+그래서 실제로 사용자의 요청을 처리하고 서버의 자원들을 활용할 수 있게 해줍니다.
+
+0:02:03.190,0:02:07.584
+그리고 저희는 Meta Reinforcement Learning에 집중하고 있습니다.
+
+0:02:07.584,0:02:12.000
+이 Meta Reinforcement Learning은 구조적으로 유사한 문제들에 대해서
+
+0:02:12.000,0:02:15.517
+평균적으로 조금 더 빠르게 적응하고 학습할 수 있습니다.
+
+0:02:15.517,0:02:19.136
+그리고 이를 task scheduler로 활용이 가능하다는 것을
+
+0:02:19.136,0:02:22.877
+2023년에 퍼블리시된 세 편의 페이퍼를 통해 확인했습니다.
+
+0:02:23.340,0:02:28.838
+그래서 저희는 Kubernetes에 Meta-RL을 적용하는 방법을 연구하는 것이 최종 목표이고요.
+
+0:02:28.838,0:02:31.178
+이 과정을 크게 세 가지로 나눠서
+
+0:02:31.178,0:02:33.562
+첫째로는 모델을 분할하고 파이프라인을 구성해서
+
+0:02:33.562,0:02:37.898
+대규모의 모델을 저성능 리소스로 구성된 클러스터에서 서빙할 수 있게 하는
+
+0:02:37.898,0:02:41.054
+ 일종의 분산 서빙을 연구할 것이고요.
+
+0:02:41.054,0:02:44.770
+둘째로는 이를 쿠버네티스 클러스터에 배포하여
+
+0:02:44.770,0:02:48.972
+고가용성 기능들을 적용할 수 있는 방법을 연구할 것입니다.
+
+0:02:48.972,0:02:52.417
+또한 셋째로는 이 과정의 리소스 스케줄링을
+
+0:02:52.417,0:02:56.431
+Meta-RL 스케줄러를 활용해서 최적화하는 방법을 연구할 것입니다.
+
+0:02:56.922,0:02:59.397
+연구 방법에 대해서 소개해 드리겠습니다.
+
+0:02:59.397,0:03:04.304
+우선 저희는 연구의 복잡성을 조금 줄이고자 모델의 분할이 가능하다고 가정합니다.
+
+0:03:04.304,0:03:07.602
+이를 위해서 실제로 분할이 가능한 모델을 선정할 것이고요.
+
+0:03:07.602,0:03:10.738
+또한 이 선정된 모델의 몇 개의 레이어를
+
+0:03:10.738,0:03:13.645
+스테이지로 묶어서 파이프라인을 구성합니다.
+
+0:03:14.178,0:03:16.558
+이렇게 파이프라인 된 각 스테이지를
+
+0:03:16.558,0:03:20.836
+서버 애플리케이션으로 감싸서 Kubernetes 환경에 배포할 것입니다.
+
+0:03:20.836,0:03:24.505
+그리고 이때 Kuberenetes의 Service나 Deployment와 같은
+
+0:03:24.505,0:03:29.201
+고가용성 기능들을 활용해서 분산 파이프라인을 구현할 것입니다.
+
+0:03:29.636,0:03:31.693
+그리고 이렇게 스케줄링 했을 때
+
+0:03:31.693,0:03:36.784
+스케줄링 결과 서버들의 throughput과 latency를 측정할 것입니다.
+
+0:03:36.784,0:03:39.622
+이를 통해서 Meta-RL 스케줄러를 학습시켜서
+
+0:03:39.622,0:03:44.513
+기존의 스케줄러 대비해서 성능이 향상했을지
+확인하는 것이 최종 목표입니다.
+
+0:03:44.878,0:03:47.881
+이를 위해서 태스크를 최대한 작게 가져가서
+
+0:03:47.881,0:03:50.737
+연구의 효율성을 조금 더 높이고자 했습니다.
+
+0:03:50.737,0:03:54.249
+우선 일반적인 이미지 분류 태스크에 해당하는
+
+0:03:54.249,0:03:57.411
+ImageNet Challenge 태스크를 선정했고요.
+
+0:03:57.411,0:04:02.846
+데이터 또한 ImageNet 1K, 추론 모델로는 ResNet-50을 선정했습니다.
+
+0:04:03.070,0:04:05.774
+우선 저희는 Kubernetes 클러스터를 구축했습니다.
+
+0:04:05.774,0:04:11.444
+AWS의 단일 VPC 및 단일 서브넷에 EC2 인스턴스 세 대를 설치했고요.
+
+0:04:11.444,0:04:15.939
+이를 한 대는 마스터 노드, 두 대는 워커 노드로 구성했으며
+
+0:04:15.939,0:04:18.991
+특히 마스터 노드는 상대적으로 저성능인 t3.small
+
+0:04:18.991,0:04:22.801
+그리고 워커 노드는 두 개의 vCPU와 4GB 메모리로 구성된
+
+0:04:22.801,0:04:26.344
+t3.medium 인스턴스들로 설치했습니다.
+
+0:04:26.344,0:04:30.968
+그리고 Kubeadm을 통해서 Kubernetes를 설치했고요.
+
+0:04:30.968,0:04:35.828
+또한 노드 간, Kubernetes에서 자체 제공하는 Cluster IP와 Cluster DNS로
+
+0:04:35.828,0:04:38.473
+통신이 가능한 것을 확인했습니다.
+
+0:04:39.113,0:04:43.549
+그리고 또한 저희는 모델 분할 작업을 진행했습니다.
+
+0:04:43.549,0:04:47.648
+PyTorch를 활용해서 ResNet 모델을 레이어 0번부터 9번까지
+
+0:04:47.648,0:04:51.877
+그리고 10번부터 21번까지 두 개의 스테이지로 분할하였고요.
+
+0:04:51.877,0:04:56.068
+각각의 스테이지를 Flask, 파이썬의 프레임워크를 통해서
+
+0:04:56.068,0:04:59.172
+서버 애플리케이션으로 한 번 wrapping했습니다.
+
+0:04:59.172,0:05:01.956
+이를 도커 이미지 및 컨테이너로 감싸고
+
+0:05:01.956,0:05:03.579
+그리고 Pod로 한 번 더 wrapping해서
+
+0:05:03.579,0:05:06.509
+Kubernetes 클러스터에 임시로 배포를 해 보았고요.
+
+0:05:06.509,0:05:08.271
+이렇게 했을 때
+
+0:05:08.271,0:05:12.347
+모델 파이프라인이 정상적으로 동작하는 것을 확인했습니다.
+
+0:05:12.701,0:05:15.122
+그리고 그 다음에는 Kubernetes 환경에서
+
+0:05:15.122,0:05:19.369
+조금 더 고가용성을 가능하도록 하는 파이프라인으로 개선하였습니다.
+
+0:05:19.369,0:05:21.115
+Kubernetes에서 고가용성을 제공하는
+
+0:05:21.115,0:05:23.904
+Deployment와 Service 등의 기능을 활용하고자 했고요.
+
+0:05:23.904,0:05:28.008
+그래서 각 서버를 Kubernetes의 Deployment로 감싸서
+
+0:05:28.008,0:05:30.415
+Kubernetes 환경에 재배포 하였고요.
+
+0:05:30.415,0:05:33.307
+또한 Kubernetes의 NodePort Service를 통해서
+
+0:05:33.307,0:05:35.672
+각 분할 서버들의 포트 번호를 고정시켜서 연결을 조금 더 수월하게 했습니다.
+
+0:05:35.672,0:05:38.289
+연결을 조금 더 수월하게 했습니다.
+
+0:05:38.289,0:05:42.323
+그리고 Kubernetes DNS와 ConfigMap을 활용해서
+
+0:05:42.323,0:05:45.779
+모델 분할 정보와 다음 스테이지의 엔드포인트 등의 정보를
+
+0:05:45.779,0:05:48.735
+설정값으로 주입하는 것을 진행했습니다.
+
+0:05:48.735,0:05:51.610
+그리고 이렇게 구축된 최종 파이프라인에서
+
+0:05:51.610,0:05:56.691
+샘플 이미지를 입력으로 넣었을 때 추론 결과가 잘 나오는지 확인하여
+
+0:05:56.691,0:05:58.675
+파이프라인을 검증했습니다.
+
+0:05:58.675,0:06:03.790
+실제로 인터넷에서 임의로 확보한 자동차 사진을 input으로 넣었을 때
+
+0:06:03.790,0:06:07.801
+그것이 실제로 사륜차라고 응답하는 것을 확인했습니다.
+
+0:06:08.210,0:06:11.766
+그다음으로 저희는 Meta-RL 스케줄러를 설계했습니다.
+
+0:06:11.766,0:06:14.579
+우선 Kubernetes의 기능을 조사하면서
+
+0:06:14.579,0:06:18.440
+resource requests와 limits라는 기능 그리고 node affinity라는 기능이
+
+0:06:18.440,0:06:21.092
+스케줄링에 영향을 준다는 것을 확인했습니다.
+
+0:06:21.092,0:06:26.402
+전자의 경우 애플리케이션의 리소스 요구량 혹은 상한을
+설정할 수 있는 것이고요.
+
+0:06:26.402,0:06:31.325
+후자는 애플리케이션이 특정 노드 그룹에 스케줄링, 즉 배치될 수 있도록
+
+0:06:31.325,0:06:34.840
+필수 조건 혹은 선호 조건을 설정하는 기능입니다.
+
+0:06:34.840,0:06:38.080
+그래서 저희는 이 기능들을 활용할 수 있을 것이라 주목했고
+
+0:06:38.080,0:06:41.835
+이를 통해서 스케줄러의 input과 output을 정의하였습니다.
+
+0:06:41.835,0:06:46.473
+우선 input은 현재 주어진 리소스의 현황 그리고 소비 현황,
+
+0:06:46.473,0:06:50.409
+그리고 또한 앞으로 스케줄링 할 애플리케이션에 필요한
+
+0:06:50.409,0:06:55.711
+resource request와 limit
+
+0:06:55.711,0:07:00.198
+즉 애플리케이션이 필요로 하는 자원의 양을 입력합니다.
+
+0:07:00.198,0:07:04.862
+그리고 output의 경우는 이렇게 스케줄링이 필요한 애플리케이션을
+
+0:07:04.862,0:07:08.156
+최적의 node로 배치하게 하는 node affinity
+
+0:07:08.156,0:07:12.556
+즉 어떤 노드에 배치할지를 output으로 받는 것입니다.
+
+0:07:12.556,0:07:16.326
+또한 Meta-RL 스케줄러, 즉 강화 학습 스케줄러를 연동한 것이기 때문에
+
+0:07:16.326,0:07:18.134
+(모델 훈련에) reward의 개념이 필요합니다.
+
+0:07:18.134,0:07:19.938
+이 모델(스케줄러)에 대한 reward는
+
+0:07:19.938,0:07:22.243
+모델(애플리케이션)의 throughput과 latency가
+
+0:07:22.243,0:07:26.713
+더 긍정적인 방향으로 변화하는지 평가하여 reward로 주기로 했습니다.
+
+0:07:27.000,0:07:29.940
+저희의 진행 상황과 향후 계획에 대해서 말씀드리겠습니다.
+
+0:07:29.940,0:07:33.284
+저희의 현재 마일스톤은 Kubernetes의 스케줄링 기능들을
+
+0:07:33.284,0:07:35.474
+활용할 수 있을지 검증하는 것입니다.
+
+0:07:35.474,0:07:38.541
+앞서 말씀드렸던 리소스의 requests, limits와
+
+0:07:38.541,0:07:42.889
+그리고 node affinity를 활용해서 스케줄링이 가능할지를 검증하는,
+
+0:07:42.889,0:07:46.223
+저희 설계가 실현 가능할 것인지를 검증할 것이고요.
+
+0:07:46.223,0:07:51.369
+그리고 Kubernetes의 Job을 활용해서 지금 분산 환경에 배포된
+
+0:07:51.369,0:07:56.014
+모델 파이프라인의 throughput과 latency를 측정해 볼 것입니다.
+
+0:07:56.014,0:08:00.346
+이를 통해서 저희가 설계한 것이 가능하다는 것을 검증하는 것이 목표이고요.
+
+0:08:00.346,0:08:04.902
+그리고 앞으로 향후 연구 계획은 Meta-RL의 스케줄러를 학습시키고
+
+0:08:04.902,0:08:07.698
+기존 스케줄링과의 비교를 위해서 벤치마킹하고
+
+0:08:07.698,0:08:10.204
+실제로 비교 실험을 수행할 것입니다.
+
+0:08:10.452,0:08:12.718
+이 연구를 통해서 저희가 기대하는 바는
+
+0:08:12.718,0:08:17.736
+우선 분산 환경에서 모델 분할과 서빙이 가능하다는 것입니다.
+
+0:08:17.736,0:08:23.025
+이를 특히 Kubernetes를 활용해서 조금 더 수월하게 할 수 있다는 것에 초점을 두고 있고요.
+
+0:08:23.025,0:08:27.528
+그리고 이 과정에서 Kubernetes의 고가용성을 위한 기능들을 활용해서
+
+0:08:27.528,0:08:30.473
+장애 복구 등의 기능을 조금 더 원활하게 사용할 수 있도록
+
+0:08:30.473,0:08:33.821
+Kubernetes를 적극적으로 활용하는 것이 두 번째 기대효과입니다.
+
+0:08:33.821,0:08:38.032
+또한 세 번째로는 Kubernetes의 스케줄러 성능 향상을 기대하여,
+
+0:08:38.032,0:08:39.884
+이를 통해서 리소스의 활용을,
+
+0:08:39.884,0:08:44.605
+조금 더 utilization을 높이는 것이 저희의 기대 효과입니다.
+
+0:08:44.605,0:08:48.435
+그리고 이 연구에 이어서 앞으로 더 연구할 수 있는 것 또한 있습니다.
+
+0:08:48.435,0:08:50.857
+지금은 저희가 추론에만 활용하고 있지만
+
+0:08:50.857,0:08:55.138
+이러한 구조를 인공지능 모델 학습에 활용할 수 있는지 연구할 것입니다.
+
+0:08:55.138,0:08:58.887
+둘째로는 저희가 모델을 레이어를 기준으로 쪼겠지만
+
+0:08:58.887,0:09:04.531
+레이어가 아닌 텐서를 기준으로 쪼개는 tensor parallelism을 연구할 것입니다.
+
+0:09:04.531,0:09:07.739
+또한 세 번째로는 저희가 자원의 한계로 인해서
+
+0:09:07.739,0:09:10.773
+소규모의 환경에서 연구를 하고 있지만
+
+0:09:10.773,0:09:14.104
+더욱 대규모의 환경에서 발생할 수 있는 문제들과
+
+0:09:14.104,0:09:18.081
+이에 대한 해결을 기대하는 대규모 환경에서의 연구를 기대하고 있습니다.
+
+0:09:18.362,0:09:21.722
+지금까지 저희의 발표를 들어주셔서 감사합니다.
+`;
+
+  const questionPrompt = `
+You are an assistant analyzing a video transcript to answer user questions.
+The transcript includes timestamps for each sentence.
+
+Your task:
+1. Carefully analyze the transcript to identify all relevant timestamps and their content that might help answer the question.
+2. Use these timestamps to generate a concise and factual answer.
+3. Clearly list:
+   - The answer.
+   - The relevant timestamps.
+   - The transcript content corresponding to these timestamps.
+
+Format your response as follows:
+Answer: [Your concise and factual answer]
+Timestamps: [List all relevant timestamps, e.g., 0:00:00.000 - 0:00:05.000, ...]
+Referenced Content:
+1. [Timestamp]: [Content from the transcript]
+2. [Timestamp]: [Content from the transcript]
+
+Here is the transcript: ${script}
+
+Question: ${question}
+`;
+
+  // 요청 페이로드 생성
+  var payload = {
+    model: "gpt-4o-mini", // GPT-4 모델 사용
+    messages: [{ role: "user", content: questionPrompt }],
+    max_tokens: 500, // 응답의 최대 토큰 수
+    temperature: 0.7
+  };
+
+  // 요청 헤더 설정
+  var headers = {
+    "Authorization": "Bearer " + OPENAI_API_KEY,
+    "Content-Type": "application/json"
+  };
+
+  // 요청 옵션 설정
+  var options = {
+    method: "post",
+    headers: headers,
+    payload: JSON.stringify(payload)
+  };
+
+  try {
+    // OpenAI API 호출
+    var response = UrlFetchApp.fetch(OPENAI_API_URL, options);
+    var result = JSON.parse(response.getContentText());
+
+    // 결과 반환
+    return {
+      prompt: question,
+      response: result.choices[0].message.content.trim() // GPT 응답 텍스트
+    };
+  } catch (error) {
+    // 오류 처리
+    return { error: "Failed to fetch response from OpenAI: " + error.message };
+  }
+}
+
+
+// 2. Endpoint to save a question, answer, title, and author to Google Sheets
+function saveQA(req, db) {
+  var question = req.parameter.question;
+  var title = req.parameter.title;
+  var author = req.parameter.author;
+  var sheetName = req.parameter.table || "DefaultSheet";
+
+  if (!question || !title || !author) {
+    return { error: "Question, title, and author are required" };
+  }
+
+  var sheet = db.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = db.insertSheet(sheetName);
+    sheet.appendRow(["ID", "Title", "Author", "Question", "Timestamp"]);
+  }
+
+  var id = sheet.getLastRow();
+  sheet.appendRow([id, title, author, question, new Date()]);
+  return { success: true, message: "Saved successfully", id: id };
+}
+
+// 3. Endpoint to list IDs, titles, authors, and timestamps from a specific sheet
+function listQA(req, db) {
+  var sheetName = req.parameter.table;
+  if (!sheetName) {
+    return { error: "Table name is required" };
+  }
+
+  var sheet = db.getSheetByName(sheetName);
+  if (!sheet) {
+    return { error: `Sheet '${sheetName}' not found` };
+  }
+
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var records = data.slice(1).map(row => {
+    return {
+      ID: row[headers.indexOf("ID")],
+      Title: row[headers.indexOf("Title")],
+      Author: row[headers.indexOf("Author")],
+      Timestamp: row[headers.indexOf("Timestamp")]
+    };
+  });
+
+  return { records: records };
+}
+
+// 4. Endpoint to retrieve full details of a specific QA entry by ID
+function getQA(req, db) {
+  var sheetName = req.parameter.table;
+  var id = req.parameter.id;
+
+  if (!sheetName || !id) {
+    return { error: "Table name and ID are required" };
+  }
+
+  var sheet = db.getSheetByName(sheetName);
+  if (!sheet) {
+    return { error: `Sheet '${sheetName}' not found` };
+  }
+
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var record = data.slice(1).find(row => row[headers.indexOf("ID")] == id);
+
+  if (!record) {
+    return { error: `No entry found with ID '${id}'` };
+  }
+
+  return {
+    ID: record[headers.indexOf("ID")],
+    Title: record[headers.indexOf("Title")],
+    Author: record[headers.indexOf("Author")],
+    Timestamp: record[headers.indexOf("Timestamp")],
+    Question: record[headers.indexOf("Question")],
+    Answer: record[headers.indexOf("Answer")]
+  };
+}
+
+// 5. Save Answer: Updates the "Answer" column for a given ID
+function saveAnswer(req, db) {
+  var id = req.parameter.id;
+  var question = req.parameter.question;
+  var answer = req.parameter.answer;
+  var sheetName = req.parameter.table || "QAData";
+
+  if (!id || !answer) {
+    return { error: "ID and Answer are required" };
+  }
+
+  var sheet = db.getSheetByName(sheetName);
+  if (!sheet) {
+    return { error: `Sheet '${sheetName}' not found` };
+  }
+
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var idIndex = headers.indexOf("ID");
+  var answerIndex = headers.indexOf("Answer");
+
+  if (idIndex === -1 || answerIndex === -1) {
+    return { error: "ID or Answer column not found in sheet" };
+  }
+
+  var updated = false;
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][idIndex] == id) {
+      // Update the Answer column
+      sheet.getRange(i + 1, answerIndex + 1).setValue(answer);
+      updated = true;
+      break;
+    }
+  }
+
+  if (updated) {
+    return { success: true, message: "Answer updated successfully" };
+  } else {
+    return { success: false, error: `No entry found with ID '${id}'` };
+  }
+}

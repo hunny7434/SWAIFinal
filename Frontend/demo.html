@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>YATA - AI Teaching Assistant for Educators</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <!-- 폰트 선택: Roboto + Poppins 등 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', 'Roboto', sans-serif;
+            background-color: #f4f5f7;
+            color: #343a40;
+        }
+
+        .hero {
+            padding: 60px 0;
+        }
+
+        .sitename {
+            font-weight: 700;
+            color: #007bff;
+        }
+
+        .section-title h3, .section-title h2 {
+            font-weight: 700;
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: #fff;
+        }
+
+        .response-box {
+            border-radius: 8px;
+            font-size: 0.95rem;
+            border: 1px solid #ced4da;
+            background-color: #ffffff;
+            padding: 15px;
+            min-height: 100px;
+        }
+
+        .video-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .video-description {
+            border-radius: 8px;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .video-description h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .video-description p {
+            margin-bottom: 10px;
+        }
+
+        .video-description ul {
+            padding-left: 20px;
+        }
+
+        .video-description ul li {
+            margin-bottom: 5px;
+        }
+
+        .video-container video {
+            flex: 1;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-height: 400px;
+        }
+
+        .table thead {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+
+<body class="index-page">
+
+<header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+        <a href="index.html" class="logo d-flex align-items-center">
+            <h1 class="sitename mb-0">YATA</h1>
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+            <ul>
+                <li><a href="index.html#hero">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+                <li><a href="demo.html">Demo</a></li>
+            </ul>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+    </div>
+</header>
+
+<main class="main">
+
+    <!-- Video Section -->
+    <section id="hero" class="hero section light-background">
+        <div class="container video-container">
+            <!-- 흰색 배경(bg-white)나 쉐도우(shadow-sm) 없이 기본 배경 유지 -->
+            <div class="video-description" style="max-width: 600px;">
+                <h3 class="fw-semibold fs-4 text-dark mb-3" style="line-height:1.4;">AI와 함께 영상 학습을 더 스마트하게!</h3>
+
+                <p class="mb-4 text-body" style="line-height:1.6;">
+                    이 데모는 강의 영상을 기반으로 AI가 질문에 대한 답변을 제공하는 서비스입니다.<br>
+                    동영상 내용을 질문하면 AI가 분석하여 답변을 생성합니다.
+                </p>
+
+                <ul class="list-unstyled mb-4" style="line-height:1.6; margin-left:1rem;">
+                    <li class="mb-2"><span style="color:#6c757d;">•</span> 영상을 시청하며 궁금한 점을 입력하세요.</li>
+                    <li class="mb-2"><span style="color:#6c757d;">•</span> AI가 관련 내용을 분석해 답변합니다.</li>
+                    <li class="mb-2"><span style="color:#6c757d;">•</span> 관련 영상 구간도 함께 참조할 수 있습니다.</li>
+                </ul>
+
+                <p class="fw-medium text-dark" style="line-height:1.4;">지금 바로 체험해보세요!</p>
+            </div>
+
+
+            <iframe
+                    width="560"
+                    height="315"
+                    src="https://www.youtube.com/embed/N858NDdEP5M"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+        </div>
+    </section>
+
+    <!-- Write Section -->
+    <section id="write-section" class="section">
+        <div class="container">
+            <div class="card card-custom p-4">
+                <h3 class="text-secondary">질문 작성</h3>
+                <form>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="title" class="form-label">제목</label>
+                            <input type="text" id="title" class="form-control" placeholder="제목을 입력하세요">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="author" class="form-label">작성자</label>
+                            <input type="text" id="author" class="form-control" placeholder="작성자를 입력하세요">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="question" class="form-label">질문</label>
+                        <textarea id="question" class="form-control" rows="4" placeholder="질문을 입력하세요"></textarea>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button id="post-btn" class="btn btn-success" type="button">질문 남기기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Board Section -->
+    <section id="board-section" class="section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="text-secondary mb-0">질문 목록</h3>
+            </div>
+            <div class="card card-custom p-3">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>시간</th>
+                    </tr>
+                    </thead>
+                    <tbody id="post-list">
+                    <!-- 게시글 데이터 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- View Section -->
+    <section id="view-section" class="section" style="display:none;">
+        <div class="container">
+            <div class="card card-custom p-4">
+                <div class="mt-3">
+                    <button id="view-back-btn" class="btn btn-secondary" type="button">뒤로 가기</button>
+                </div>
+                <div class="mb-4" style="margin-bottom: 20px;"></div>
+                <h3 class="text-secondary">질문 상세 보기</h3>
+                <form>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="view-title" class="form-label">제목</label>
+                            <input type="text" id="view-title" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="view-author" class="form-label">작성자</label>
+                            <input type="text" id="view-author" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="view-question" class="form-label">질문</label>
+                        <textarea id="view-question" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <button id="get-llm-response" class="btn btn-secondary" type="button">강의와 관련된 대답 생성</button>
+                    </div>
+                    <div class="mb-3">
+                        <div id="llm-response" class="response-box mt-3"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer id="footer" class="footer light-background">
+    <div class="container text-center">
+        <p>&copy; 2024 YATA. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<!-- Vendor JS Files -->
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/aos/aos.js"></script>
+<script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+
+<script>
+    // 전역 변수
+    const API_BASE_URL = "https://script.google.com/macros/s/AKfycbzDP0DfaVmIeQ8y_-H9NgR7KBOegjWYiCmrWjcP5HGJD-q-KAx7O4cC8MGAXDlMvi5VWA/exec";
+
+    const writeSection = document.getElementById("write-section");
+    const boardSection = document.getElementById("board-section");
+
+    document.getElementById("get-llm-response").addEventListener("click", async () => {
+        const question = document.getElementById("view-question").value;
+        const id = document.getElementById("view-title").dataset.id; // 게시글 ID (숨겨진 데이터)
+        if (!question || !id) {
+            alert("질문 또는 ID가 비어 있습니다.");
+            return;
+        }
+
+        try {
+            // AI 대답 생성 API 호출
+            const url = `${API_BASE_URL}?action=chat&question=${encodeURIComponent(question)}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`서버 오류: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.response) {
+                const answer = result.response;
+
+                // 생성된 응답을 llm-response에 표시
+                document.getElementById("llm-response").innerText = answer;
+
+                // 대답 저장 API 호출
+                console.log("id: " + id + "\nquestion: " + question + "\nanswer: " + answer);
+                await saveAnswer(id, question, answer);
+            } else {
+                alert("응답 데이터가 비어 있습니다.");
+                console.error("서버 응답:", result);
+            }
+        } catch (error) {
+            alert("응답을 가져오는 중 오류가 발생했습니다.");
+            console.error("에러:", error);
+        }
+    });
+
+    // 대답 저장 API 호출 함수
+    async function saveAnswer(id, question, answer) {
+        try {
+            const url = `${API_BASE_URL}?action=saveAnswer&id=${encodeURIComponent(id)}&question=${encodeURIComponent(question)}&answer=${encodeURIComponent(answer)}&table=QAData`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`서버 오류: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                // alert("대답이 저장되었습니다.");
+            } else {
+                alert("대답 저장 실패");
+                console.error("서버 응답:", result);
+            }
+        } catch (error) {
+            alert("대답 저장 중 오류가 발생했습니다.");
+            console.error("에러:", error);
+        }
+    }
+
+    document.getElementById("post-btn").addEventListener("click", async () => {
+        const title = document.getElementById("title").value;
+        const author = document.getElementById("author").value;
+        const question = document.getElementById("question").value;
+
+        if (!title || !author || !question) {
+            alert("모든 필드를 입력하세요.");
+            return;
+        }
+
+        try {
+            const url = `${API_BASE_URL}?action=saveQA&title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}&question=${encodeURIComponent(question)}&table=QAData`;
+            const saveResponse = await fetch(url);
+
+            const saveResult = await saveResponse.json();
+
+            if (saveResult.success) {
+                alert("질문이 저장되었습니다.");
+
+                // 작성 칸 초기화
+                document.getElementById("title").value = "";
+                document.getElementById("author").value = "";
+                document.getElementById("question").value = "";
+
+                // 게시글 목록 갱신
+                loadPosts();
+            } else {
+                alert("질문 저장 실패");
+            }
+        } catch (error) {
+            alert("질문 저장 중 오류가 발생했습니다.");
+            console.error("에러:", error);
+        }
+    });
+
+    async function loadPosts() {
+        try {
+            const url = `${API_BASE_URL}?action=listQA&table=QAData`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`서버 오류: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            const postList = document.getElementById("post-list");
+            postList.innerHTML = "";
+
+            result.records.forEach(post => {
+                const row = `
+          <tr onclick="viewPost(${post.ID})" style="cursor: pointer;">
+              <td>${post.ID}</td>
+              <td>${post.Title}</td>
+              <td>${post.Author}</td>
+              <td>${post.Timestamp}</td>
+          </tr>`;
+                postList.innerHTML += row;
+            });
+        } catch (error) {
+            alert("질문을 로드하는 중 오류가 발생했습니다.");
+            console.error("에러:", error);
+        }
+    }
+
+    async function viewPost(postId) {
+        try {
+            const url = `${API_BASE_URL}?action=getQA&table=QAData&id=${postId}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`서버 오류: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.error) {
+                alert(result.error);
+                return;
+            }
+
+            // 질문 및 기존 답변을 상세 페이지에 표시
+            const titleElement = document.getElementById("view-title");
+            titleElement.value = result.Title;
+            titleElement.dataset.id = postId; // 숨겨진 데이터로 ID 저장
+
+            document.getElementById("view-author").value = result.Author;
+            document.getElementById("view-question").value = result.Question;
+            document.getElementById("llm-response").innerText = result.Answer || "답변이 없습니다."; // 기존 답변 표시
+
+            // 섹션 전환
+            document.getElementById("board-section").style.display = "none";
+            document.getElementById("view-section").style.display = "block";
+        } catch (error) {
+            alert("질문을 불러오는 중 오류가 발생했습니다.");
+            console.error("에러:", error);
+        }
+    }
+
+    document.getElementById("view-back-btn").addEventListener("click", () => {
+        document.getElementById("view-section").style.display = "none";
+        document.getElementById("board-section").style.display = "block";
+    });
+
+    window.onload = loadPosts;
+</script>
+</body>
+</html>
